@@ -1,0 +1,166 @@
+question,status,wall_ms,server_ms,input_tokens,output_tokens,retrieval_hit,answer,reference,grade
+Are Kubernetes Secrets encrypted in the API server's data store by default?,200,2540,2350,1497,27,True,"No. By default, Kubernetes Secrets are stored unencrypted in the API server's underlying data store (etcd) [1].",No. Secrets are stored unencrypted in the API server's underlying data store by default.,
+What is the default egress behavior for a pod that no NetworkPolicy selects?,200,6278,6138,1600,75,True,"Based on the provided sources, by default (if no policies exist in a namespace), all egress traffic is allowed to and from pods in that namespace [3]. 
+
+Connections from a pod are only restricted when it is isolated for egress by a NetworkPolicy that selects it [1], or if a namespace-wide default egress deny policy selecting all pods is created [2].","The pod is non-isolated for egress, so all outbound connections are allowed.",
+What is the default ingress behavior for a pod that no NetworkPolicy selects?,200,3145,2938,1587,51,True,"By default, a pod is non-isolated for ingress, which means all inbound connections are allowed [1]. A pod only becomes isolated for ingress if a NetworkPolicy selects the pod and has ""Ingress"" in its `policyTypes` [1].","The pod is non-isolated for ingress, so all inbound connections are allowed.",
+What must a cluster use to enforce NetworkPolicy rules?,200,2410,2263,1468,29,True,"To enforce NetworkPolicy rules, a cluster must use a network plugin (or networking solution) that supports NetworkPolicy enforcement [1], [2].",A networking solution (CNI plugin) that supports NetworkPolicy.,
+What constraint applies to the endPort field in a NetworkPolicy port range?,200,2915,2700,1630,72,True,"Based on the provided sources, the following restrictions apply when using the `endPort` field:
+
+* The `endPort` field must be equal to or greater than the `port` field [2].
+* `endPort` can only be defined if `port` is also defined [2].
+* Both ports must be numeric [2].",endPort must be equal to or greater than port.,
+What is the default tolerance for the Horizontal Pod Autoscaler?,200,2253,2042,1552,19,True,The default cluster-wide tolerance for the Horizontal Pod Autoscaler is 10% [1].,"0.1, which is configurable.",
+Can Kubernetes namespaces be nested inside one another?,200,1934,1792,1555,13,True,"No, Kubernetes namespaces cannot be nested inside one another [1].",No. Namespaces cannot be nested inside one another.,
+What must namespace names be?,200,2449,2284,1580,23,True,"Based on the provided sources, all namespace names must be valid RFC 1123 DNS labels [2].",They must be valid DNS labels.,
+What is the maximum number of IP addresses in a Pod's dnsConfig nameservers list?,200,2230,2093,1759,34,True,"Based on the provided sources, the `nameservers` list in a Pod's `dnsConfig` can specify at most **3** IP addresses [1].",At most 3 IP addresses.,
+"When dnsPolicy is None, what must the dnsConfig nameserver list contain?",200,2806,2565,1737,33,True,"When `dnsPolicy` is set to ""`None`"", the `dnsConfig` `nameservers` list must contain at least one IP address [2].",At least one IP address.,
+Must maxSkew in a topology spread constraint be greater than zero?,200,2210,2078,1651,23,True,"Yes. You must specify the `maxSkew` field, and the number must be greater than zero [1].",Yes. maxSkew must be specified and must be greater than zero.,
+Can minDomains in a topology spread constraint be zero?,200,2500,2290,1662,42,True,"No. When specified, the value of `minDomains` must be greater than 0 [1]. If `minDomains` is not specified, the constraint behaves as if it is 1 [1].","No. When specified, minDomains must be greater than 0.",
+Can matchLabelKeys be set without a labelSelector in a topology spread constraint?,200,2154,1914,1652,22,True,"No, `matchLabelKeys` cannot be set when `labelSelector` isn't set [4].",No. matchLabelKeys cannot be set when labelSelector isn't set.,
+Can a cluster define default topology spread constraints?,200,3091,2962,1582,100,True,"Yes, a cluster can set cluster-level default topology spread constraints [1], [2]. 
+
+Default constraints can be configured as part of the `PodTopologySpread` plugin arguments in a scheduling profile [3]. They are applied to a Pod if:
+* The Pod does not define any constraints in its `.spec.topologySpreadConstraints` [2], [3].
+* The Pod belongs to a Service, ReplicaSet, StatefulSet, or ReplicationController [2], [3].",Yes. It is possible to set default topology spread constraints for a cluster.,
+Can a PriorityClass name start with the prefix system-?,200,1315,1173,1698,20,True,No. The name of a PriorityClass object cannot be prefixed with `system-` [1].,No. It cannot be prefixed with system-.,
+What is the default preemptionPolicy for a PriorityClass?,200,3374,3215,1546,42,True,"Based on the provided sources, the answer is not mentioned. The sources discuss setting `preemptionPolicy` to `Never` [1], but do not specify what the default `preemptionPolicy` is.",PreemptLowerPriority.,
+Is a PriorityClass namespaced?,200,2049,1838,1676,15,True,"No, a PriorityClass is a non-namespaced object [1].",No. A PriorityClass is a non-namespaced object.,
+What does a PriorityClass define?,200,2968,2788,1646,90,True,"Based on the provided sources, a PriorityClass defines a mapping from a priority class name to the integer value of the priority [1]. It can also optionally define:
+
+* **`globalDefault`**: Indicates whether the value of the PriorityClass should be used for Pods without a `priorityClassName` [2].
+* **`description`**: An arbitrary string meant to tell users of the cluster when to use the PriorityClass [2].",A mapping from a name to an integer priority value.,
+What is a RuntimeClass used for?,200,4182,4007,1321,145,True,"Based on the provided sources, a RuntimeClass is used to select the container runtime configuration that runs a Pod's containers [1]. 
+
+Specifically, it is used to:
+* **Balance performance versus security:** You can assign different RuntimeClasses to different Pods so high-security workloads can run in an alternative container runtime (such as one using hardware virtualization for extra isolation) [1].
+* **Apply different settings:** You can run different Pods using the same container runtime, but configured with different settings [1].
+* **Instruct the kubelet:** Specifying a `runtimeClassName` in a Pod's spec instructs the kubelet to use that specific RuntimeClass to run the pod [4].",Selecting the container runtime configuration.,
+What does RuntimeClass assume about node configuration by default?,200,2063,1877,1523,33,True,"By default, RuntimeClass assumes a homogeneous node configuration across the cluster, which means that all nodes are configured the same way with respect to container runtimes [3].",A homogeneous node configuration across the cluster.,
+"Who creates ResourceQuota objects for each namespace, according to the resource quota docs?",200,2459,2303,1598,24,True,"According to the resource quota documentation, a **cluster administrator** creates at least one ResourceQuota for each namespace [4].",A cluster administrator.,
+What delivery guarantee is intended for container lifecycle hooks?,200,2117,1988,1519,40,True,"Hook delivery is intended to be *at least once*, which means that a hook may be called multiple times for any given event, such as for `PostStart` or `PreStop` [1].",At least once.,
+What can the StopSignal lifecycle hook define?,200,2669,2519,1486,60,True,"Based on the provided sources, the `StopSignal` lifecycle can be used to define a stop signal that is sent to the container when it is stopped [1], [2]. If set, it overrides any `STOPSIGNAL` instruction defined within the container image [1], [2].",A stop signal that is sent to the container when it is terminated.,
+What is a Kubernetes annotation used for?,200,5048,4817,1395,223,True,"Kubernetes annotations are used to attach arbitrary, non-identifying metadata to objects, which can then be retrieved by clients such as tools and libraries [1]. Unlike labels, annotations are not used to identify or select objects [1].
+
+Examples of what annotations can be used to record include:
+* Fields managed by a declarative configuration layer [4].
+* Build, release, or image information (such as timestamps, release IDs, git branches, PR numbers, image hashes, and registry addresses) [4].
+* Pointers to logging, monitoring, analytics, or audit repositories [4].
+* Client library or tool debugging information (like name, version, and build info) [4].
+* User or tool/system provenance information (such as URLs of related objects) [4].
+* Lightweight rollout tool metadata (such as config or checkpoints) [4].
+* Contact details for responsible persons (e.g., phone/pager numbers or links to team websites) [4].
+* End-user directives to implementations to modify behavior or enable non-standard features [2].",Attaching arbitrary non-identifying metadata to objects.,
+How many different ways are described for using a ConfigMap to configure a container?,200,3196,3056,1681,95,True,"Based on the provided sources, there are **4** different ways described for using a ConfigMap to configure a container inside a Pod [3]:
+
+1. Inside a container command and args [3]
+2. Environment variables for a container [3]
+3. Add a file in a read-only volume for the application to read [3]
+4. Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap [3]",Four.,
+Since which version is the ResourceHealthStatus feature gate enabled by default?,200,1821,1597,1565,30,True,"Based on the provided sources, the `ResourceHealthStatus` feature gate is enabled by default since version **v1.36** [1].",Kubernetes v1.36.,
+Which Routes does a Gateway accept by default?,200,2150,1934,1544,15,True,"By default, a Gateway only accepts Routes from the same namespace [1].",Only Routes from the same namespace. Cross-namespace Routes require configuring allowedRoutes.,
+What is a service account in Kubernetes?,200,4403,4259,1490,231,True,"In Kubernetes, a service account is a type of non-human account that provides a distinct identity within a Kubernetes cluster [1]. It exists as a `ServiceAccount` object in the API server [1].
+
+Key details about service accounts include:
+* **Function:** Application Pods, system components, and entities inside and outside the cluster can use a ServiceAccount's credentials to identify as that service account [1]. This identity is useful for authenticating to the API server or implementing identity-based security policies [1].
+* **Difference from User Accounts:** While user accounts represent authenticated human users (and generally do not exist directly in the API server), service accounts represent non-human identities defined directly in the Kubernetes API [4].
+* **Properties:**
+  * **Namespaced:** Each service account is bound to a specific Kubernetes namespace [1], [4].
+  * **Lightweight:** They exist in the cluster and are defined in the API, allowing them to be created quickly for specific tasks [4].
+  * **Portable:** Their lightweight and namespaced nature makes configuration bundles for complex workloads portable [4].",A type of non-human account.,
+What does the RBAC good practices page advise about the system:masters group?,200,3465,3326,1315,171,True,"Based on the provided sources, the RBAC good practices page advises the following regarding the `system:masters` group:
+
+* **Avoid adding users to the group:** You should avoid adding users to the `system:masters` group [1].
+* **Bypasses RBAC checks:** Any user who is a member of this group bypasses all RBAC rights checks and has unrestricted superuser access [1].
+* **Cannot be revoked via bindings:** This unrestricted superuser access cannot be revoked by removing `RoleBindings` or `ClusterRoleBindings` [1], [4].
+* **Bypasses authorization webhooks:** If the cluster uses an authorization webhook, membership in the `system:masters` group bypasses that webhook as well, meaning requests from group members are never sent to the webhook [1], [4].",Avoid adding users to the system:masters group.,
+What modes can a Pod Security Admission namespace label use?,200,2813,2642,1427,94,True,"A Pod Security Admission namespace label can use the following modes [2][5]:
+
+* **`enforce`**: Policy violations will cause the pod to be rejected [2].
+* **`audit`**: Policy violations will trigger an audit annotation to be added to the event in the audit log, but the pod is allowed [2].
+* **`warn`**: Policy violations will trigger a user-facing warning, but the pod is allowed [2].","enforce, audit, or warn.",
+What Pod Security levels does Pod Security Admission define?,200,2456,2293,1396,47,True,"Pod Security Admission defines three levels according to the Pod Security Standards [2]:
+
+* `privileged` [2], [4]
+* `baseline` [2], [4]
+* `restricted` [2], [4]","privileged, baseline, and restricted.",
+What is a VolumeSnapshotContent?,200,3446,3251,1652,149,True,"Based on the provided sources, a `VolumeSnapshotContent` is a snapshot taken from a volume in the cluster that has been provisioned by an administrator [1]. 
+
+Key details include:
+* It is a resource in the cluster, similar to how a `PersistentVolume` is a cluster resource [1].
+* Along with `VolumeSnapshot`, it is an API resource used to create volume snapshots for users and administrators [1].
+* Each `VolumeSnapshotContent` contains a `spec` and a `status` [4].
+* In dynamic provisioning, the snapshot common controller creates `VolumeSnapshotContent` objects, whereas a cluster administrator is responsible for creating them in pre-provisioned snapshots [4, 5].","A snapshot taken from a volume in the cluster, provisioned by an administrator, and represented as a resource in the cluster.",
+What is the scheduling framework?,200,2654,2482,1447,76,True,"Based on the provided sources, the **scheduling framework** is a pluggable architecture for the Kubernetes scheduler [1]. 
+
+Key details include:
+* It consists of a set of ""plugin"" APIs that are compiled directly into the scheduler [1].
+* These APIs allow most scheduling features to be implemented as plugins while keeping the scheduling core lightweight and maintainable [1].",A pluggable architecture for the Kubernetes scheduler.,
+What can finalizers be used to control?,200,2735,2596,1519,48,True,"Based on the provided sources, finalizers can be used to:
+
+* Control the garbage collection of objects by alerting controllers to perform specific cleanup tasks before deleting the target resource [1].
+* Prevent the deletion of unmanaged resources [2].",Garbage collection.,
+What is Grafana Mimir described as in the observability page?,200,2202,2034,1546,33,True,"Based on the provided sources, Grafana Mimir is described as a Grafana Labs project that provides multi-tenant, horizontally scalable Prometheus-compatible storage [1].","A Grafana Labs project providing multi-tenant, horizontally scalable Prometheus-compatible storage.",
+What CNCF maturity level is the Antrea project at?,200,2697,2523,1768,16,True,The Antrea project is at the CNCF **Sandbox** level [1].,Sandbox level.,
+What does the kubelet do by default if a named ClusterTrustBundle in a projected volume is not found?,200,2005,1775,1650,24,True,"By default, the kubelet will prevent the pod from starting if the named ClusterTrustBundle is not found [1].",It prevents the pod from starting.,
+What is the TokenRequest API useful for?,200,3841,3706,1459,105,True,"Based on the provided sources, the TokenRequest API is useful for:
+
+* **Generating short-lived credentials** for service authentication to the API server or third-party systems [1].
+* **Requesting short-lived service account tokens** directly from within application code, which automatically expire and can rotate upon expiration [2].
+* **Retrieving ServiceAccount credentials** when you need to mount them in a non-standard location or use them for an audience other than the API server [2, 4].",Generating short-lived credentials for service accounts.,
+What does the shareProcessNamespace field depend on?,200,2225,2093,1616,27,True,"Based on the provided sources, the `shareProcessNamespace` field depends on Linux namespaces, which are not implemented on Windows [2].",Linux namespaces.,
+What is a declared feature for a node?,200,2751,2608,1424,73,True,"Based on the provided sources, a declared feature for a node is a string listed in the `.status.declaredFeatures` field of a Node object [1, 2]. 
+
+Nodes use declared features to report the availability of specific node-level features that are new, feature-gated, or still graduating through Kubernetes feature stages [1, 2].",A string that the node lists in its status.,
+What analogy does the controller page use to explain controllers?,200,3192,3022,1485,128,True,"The controller page uses the analogy of a **thermostat in a room** to explain control loops and controllers [1]:
+
+* Setting the temperature represents your **desired state** [1].
+* The actual room temperature represents the **current state** [1].
+* The thermostat acts to bring the current state closer to the desired state by turning equipment on or off [1]. 
+
+The text also uses thermostat behavior to illustrate other controller concepts, such as turning a light off to indicate the set temperature has been reached [2], or having a different controller turn on a frost protection heater if the room gets very cold [3].",A thermostat.,
+Does the kubelet start on a cgroup v1 node by default in recent releases?,200,2428,2285,1715,51,True,"No, the kubelet will no longer start on a cgroup v1 node by default [2]. To disable this behavior, a cluster admin must set `failCgroupV1` to `false` in the kubelet configuration file [2].",No. Kubelet will no longer start on a cgroup v1 node by default.,
+What is Kubernetes' device plugin framework used for?,200,1715,1523,1529,62,True,"Based on the provided sources, the Kubernetes device plugin framework is used to advertise system hardware resources (such as GPUs, high-performance NICs, FPGAs, InfiniBand adapters, or non-volatile main memory) to the kubelet without requiring vendor-specific code customizations to Kubernetes itself [1].",Advertising system hardware resources to the cluster.,
+What does the Pod Security Admission page say about exemptions?,200,5910,5768,1395,430,True,"Based on the provided sources, the Pod Security Admission page outlines the following details about exemptions:
+
+### Overview and Behavior
+* **Purpose:** Exemptions allow the creation of pods that would otherwise be prohibited by a given namespace's security policy [1].
+* **Effect:** Requests meeting exemption criteria are ignored by the Admission Controller, meaning all `enforce`, `audit`, and `warn` behaviors are skipped [1].
+* **Configuration:** Exemptions must be explicitly enumerated and can be statically configured in the Admission Controller configuration [1].
+
+### Exemption Dimensions
+Exemptions can be configured based on three dimensions [1]:
+* **Usernames:** Requests from users with an exempt authenticated (or impersonated) username are ignored [1].
+* **RuntimeClassNames:** Pods and workload resources that specify an exempt runtime class name are ignored [1].
+* **Namespaces:** Pods and workload resources located in an exempt namespace are ignored [1, 3].
+
+### Important Caveats
+* Exempting an end user only exempts them when creating pods directly, not when creating workload resources (since pods are created by controllers) [3].
+* Controller service accounts (e.g., `system:serviceaccount:kube-system:replicaset-controller`) should generally **not** be exempted, as doing so implicitly exempts any user who can create the corresponding workload resource [3].
+
+### Pod Field Update Exemptions
+Updates to a pod are exempt from policy checks—meaning the update request won't be denied even if the pod violates the current policy level—if the request *only* changes specific fields [3]:
+* Any metadata updates, **except** changes to seccomp or AppArmor annotations:
+  * `seccomp.security.alpha.kubernetes.io/pod` (deprecated) [3]
+  * `container.seccomp.security.alpha.kubernetes.io/*` (deprecated) [3]
+  * `container.apparmor.security.beta.kubernetes.io/*` (deprecated) [3]",Exemptions must be explicitly enumerated.,
+What should you pay attention to when requesting ephemeral-storage?,200,2539,2396,1672,78,True,"When requesting `ephemeral-storage`, you should pay attention to the case of the suffixes [2]. 
+
+For example, requesting `400m` specifies a request for 0.4 bytes, whereas you likely intended to request 400 mebibytes (`400Mi`) or 400 megabytes (`400M`) [2].",The case of the suffixes.,
+What does the optional hostname field in the Pod spec do?,200,3865,3668,1808,132,True,"Based on the provided sources, the optional `hostname` field in the Pod spec is used to specify a different hostname for the Pod (as observed from within the Pod) [1]. 
+
+When specified, it takes precedence over the Pod's default hostname, which is its `metadata.name` value [1]. For example, if `spec.hostname` is set to `""my-host""`, the Pod will have its hostname set to `""my-host""` [1][2]. When combined with the `subdomain` field, it is also used to construct the Pod's fully qualified domain name (FQDN) [2].",It specifies the hostname of the Pod.,
+Do user accounts exist in a Kubernetes cluster by default?,200,2892,2749,1415,57,True,"No, user accounts do not exist in the Kubernetes API server by default [2]. Kubernetes does not have an in-built user database within the cluster [3]; instead, user accounts are located externally, and the API server treats user identities as opaque data [1], [2].",No.,
+"In volume populators, what is the data source?",200,3800,3646,1358,144,True,"Based on the provided sources, a **data source** allows you to request that a new volume be pre-populated with existing data rather than starting empty [1]. 
+
+Specifically for custom volume populators:
+* The data source is a **custom resource** (an object whose type is defined by a `CustomResourceDefinition`) [1]. 
+* Populator controllers watch for PersistentVolumeClaims (PVCs) that reference this custom resource object (using fields like `dataSourceRef`) and populate the new volume based on it [1], [2], [3].
+
+Kubernetes also includes built-in support for data sources that clone an existing volume or restore a volume snapshot [1], [3].",A custom resource.,
+Which CEL criterion forces the use of only multiply-allocatable devices in DRA?,200,2486,2320,1489,31,True,"To force the use of only multiply-allocatable devices, you can use the CEL criteria `device.allowMultipleAllocations == true` [3].",device.allowMultipleAllocations == true,
+What is a QueueingHint in the scheduling framework?,200,3796,3608,1554,118,True,"In the Kubernetes scheduling framework, a **QueueingHint** is a callback function used to decide whether a Pod can be requeued to the active queue or the backoff queue [1, 2]. 
+
+Key details include:
+* It is executed every time a certain event or change occurs in the cluster [2].
+* When the `QueueingHint` determines that the cluster event might make the rejected/unschedulable Pod schedulable again, the Pod is placed into the active queue or backoff queue so the scheduler can retry its scheduling [2].",A callback function that decides whether a Pod can be requeued to the active queue or backoff queue.,
